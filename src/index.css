@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body {
+  @apply bg-black text-white antialiased;
+}
+
+/* subtle scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { @apply bg-neutral-700 rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-neutral-600; }
+
+@layer components {
+  .btn-primary {
+    @apply bg-ig-blue text-white font-semibold rounded-lg py-2 px-4
+           hover:bg-[#1aa0f7] active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .input {
+    @apply w-full bg-neutral-900 border border-neutral-700 rounded-md px-3 py-2 text-sm text-white
+           placeholder-gray-500 focus:outline-none focus:border-neutral-500 transition;
+  }
+  .card {
+    @apply bg-black border border-neutral-800 rounded-xl;
+  }
+}
+
+@layer components {
+  /* Instagram-style dark auth controls */
+  .ig-input {
+    @apply w-full bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-3 text-sm text-white
+           placeholder-gray-500 focus:outline-none focus:border-neutral-500 transition;
+  }
+  .ig-btn {
+    @apply w-full bg-[#0095f6] text-white font-semibold rounded-xl py-3
+           hover:bg-[#1aa0f7] active:scale-[0.99] transition disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .ig-btn-outline {
+    @apply w-full border border-neutral-700 text-white font-semibold rounded-xl py-3
+           hover:bg-neutral-900 active:scale-[0.99] transition;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* brand gradient text (logo) */
+.brand-text {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ============================================================
+   Light mode — flips the dark-first palette used across the app.
+   Scoped by html.light so the default (no class) stays dark,
+   matching Instagram's own dark-by-default web app.
+   ============================================================ */
+html.light body { @apply bg-white text-gray-900; }
+
+html.light .bg-black,
+html.light .bg-neutral-900,
+html.light .bg-neutral-800 { background-color: #ffffff !important; }
+html.light .bg-neutral-700 { background-color: #f0f0f0 !important; }
+
+html.light .border-neutral-800,
+html.light .border-neutral-700,
+html.light .border-neutral-900 { border-color: #dbdbdb !important; }
+html.light .divide-neutral-800 > * + * { border-color: #dbdbdb !important; }
+
+html.light .text-white { color: #111111 !important; }
+html.light .text-gray-100,
+html.light .text-gray-200,
+html.light .text-gray-300 { color: #262626 !important; }
+html.light .text-gray-400 { color: #737373 !important; }
+html.light .text-gray-500 { color: #8e8e8e !important; }
+html.light .placeholder-gray-500::placeholder { color: #8e8e8e !important; }
+
+html.light .hover\:bg-neutral-900:hover,
+html.light .hover\:bg-neutral-800:hover,
+html.light .hover\:bg-neutral-700:hover { background-color: #fafafa !important; }
+
+html.light .brand-text { color: #111111; -webkit-text-fill-color: initial; background: none; }
+
+/* keep overlays/backdrops (story viewer, modals, image scrims) dark for contrast,
+   like Instagram's own light-mode modals which stay on a dark scrim */
+html.light .bg-black\/60,
+html.light .bg-black\/70,
+html.light .bg-black\/80,
+html.light .bg-black\/95,
+html.light .bg-black\/40,
+html.light .bg-black\/50 { background-color: rgba(0, 0, 0, 0.7) !important; }
+
+html.light .card { @apply bg-white border-[#dbdbdb]; }
+html.light .input,
+html.light .ig-input { @apply bg-gray-50 border-[#dbdbdb] text-gray-900; }
+html.light .ig-btn-outline { @apply border-[#dbdbdb] text-gray-900; }
+html.light ::-webkit-scrollbar-thumb { background-color: #dbdbdb; }
