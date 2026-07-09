@@ -75,7 +75,7 @@ export default function StoriesBar() {
 
   return (
     <>
-      <div className="flex gap-3 overflow-x-auto pb-4 mb-2 border-b border-neutral-800 no-scrollbar">
+      <div className="flex gap-3 overflow-x-auto px-3 sm:px-0 pt-4 pb-4 mb-2 border-b border-neutral-800 no-scrollbar">
         {/* Your story: tap opens your stories if any, else upload. The + always uploads. */}
         <Ring
           avatarUrl={user?.avatarUrl}

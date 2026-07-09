@@ -138,7 +138,7 @@ export default function Profile() {
   );
 
   return (
-    <div className="max-w-[935px] mx-auto px-4">
+    <div className="max-w-[935px] mx-auto px-4 pt-4 sm:pt-0">
       {/* ================= Instagram-style header ================= */}
       <header className="flex flex-col sm:flex-row gap-6 sm:gap-0 mb-8 sm:mb-11">
         {/* avatar */}

@@ -19,11 +19,11 @@ export default function Layout() {
       <Sidebar />
       <MobileTopBar />
 
-      <main className="md:ml-[72px] pb-12 md:pb-0">
+      <main className="md:ml-[72px] pb-14 md:pb-0">
         {fullBleed ? (
           <Outlet />
         ) : (
-          <div className="max-w-5xl mx-auto px-2 sm:px-4 py-4 md:py-8">
+          <div className="max-w-5xl mx-auto px-0 sm:px-4 py-0 sm:py-6 md:py-8">
             <Outlet />
           </div>
         )}

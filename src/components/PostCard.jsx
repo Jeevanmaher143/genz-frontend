@@ -77,7 +77,7 @@ export default function PostCard({ post, onDeleted }) {
   };
 
   return (
-    <article className="card overflow-hidden mb-6">
+    <article className="bg-black overflow-hidden border-b border-neutral-800 sm:border sm:rounded-xl mb-3 sm:mb-6">
       {/* header */}
       <div className="flex items-center gap-3 px-4 py-3">
         <Link to={`/u/${post.author.username}`}>

@@ -37,7 +37,7 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="max-w-xl mx-auto">
+    <div className="max-w-xl mx-auto px-3 sm:px-0 pt-4 sm:pt-0">
       <div className="card overflow-hidden">
         <div className="px-4 py-3 border-b border-neutral-800 flex items-center justify-between">
           <h2 className="font-semibold">Create new post</h2>

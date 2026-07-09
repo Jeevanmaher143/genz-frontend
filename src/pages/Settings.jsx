@@ -33,7 +33,7 @@ export default function Settings() {
   );
 
   return (
-    <div className="grid md:grid-cols-[340px_1fr] h-[calc(100dvh-6rem)] md:h-[calc(100vh-4rem)] -my-4 md:-my-8">
+    <div className="grid md:grid-cols-[340px_1fr] h-[calc(100dvh-7rem)] md:h-[calc(100vh-4rem)] sm:-my-6 md:-my-8">
       {/* ---- left: settings menu (own scroll) ---- */}
       <div className="border-r border-neutral-800 overflow-y-auto min-h-0 py-6 pr-3">
         <h1 className="text-2xl font-bold px-3 pb-5">Settings</h1>

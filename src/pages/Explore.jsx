@@ -55,7 +55,7 @@ export default function Explore() {
   }, [q]);
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto px-3 sm:px-0 pt-4 sm:pt-0">
       {/* search bar */}
       <div className="relative mb-5 max-w-xl mx-auto">
         <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
