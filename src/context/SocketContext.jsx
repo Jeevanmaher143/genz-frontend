@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./AuthContext";
+import { SOCKET_URL } from "../config/env";
 
 const SocketContext = createContext(null);
 
@@ -14,7 +15,7 @@ export function SocketProvider({ children }) {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    const socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000", {
+    const socket = io(SOCKET_URL, {
       auth: { token },
     });
     socketRef.current = socket;
