@@ -11,6 +11,7 @@ import Avatar from "./Avatar";
 import ShareModal from "./ShareModal";
 import DeletePostModal from "./DeletePostModal";
 import PostOptionsModal from "./PostOptionsModal";
+import PostModal from "./PostModal";
 import { useAuth } from "../context/AuthContext";
 
 function timeAgo(date) {
@@ -27,8 +28,8 @@ export default function PostCard({ post, onDeleted }) {
   const navigate = useNavigate();
   const [liked, setLiked] = useState(post.likedByMe || false);
   const [likeCount, setLikeCount] = useState(post._count?.likes ?? 0);
-  const [comments, setComments] = useState([]);
-  const [showComments, setShowComments] = useState(false);
+  const [cCount, setCCount] = useState(post._count?.comments ?? 0);
+  const [postOpen, setPostOpen] = useState(false);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [sharing, setSharing] = useState(false);
@@ -50,25 +51,15 @@ export default function PostCard({ post, onDeleted }) {
     }
   };
 
-  const loadComments = async () => {
-    if (!showComments && comments.length === 0) {
-      try {
-        const res = await api.get(`/posts/${post.id}/comments`);
-        setComments(res.data.comments);
-      } catch { /* ignore */ }
-    }
-    setShowComments((v) => !v);
-  };
-
   const addComment = async (e) => {
     e.preventDefault();
     if (!text.trim()) return;
     setBusy(true);
     try {
-      const res = await api.post(`/posts/${post.id}/comments`, { text });
-      setComments((c) => [...c, res.data.comment]);
+      await api.post(`/posts/${post.id}/comments`, { text });
       setText("");
-      setShowComments(true);
+      setCCount((n) => n + 1);
+      toast.success("Comment added");
     } catch {
       toast.error("Could not post comment");
     } finally {
@@ -119,7 +110,7 @@ export default function PostCard({ post, onDeleted }) {
         <button onClick={toggleLike} className="active:scale-90 transition">
           {liked ? <AiFillHeart className="text-ig-pink" /> : <AiOutlineHeart />}
         </button>
-        <button onClick={loadComments} className="active:scale-90 transition"><FaRegComment /></button>
+        <button onClick={() => setPostOpen(true)} className="active:scale-90 transition"><FaRegComment /></button>
         <button onClick={() => setSharing(true)} className="active:scale-90 transition" title="Share"><FiSend /></button>
         <button onClick={() => toggleSave(post.id)} className="ml-auto active:scale-90 transition" title="Save">
           {isSaved(post.id) ? <BsBookmarkFill /> : <FiBookmark />}
@@ -135,21 +126,10 @@ export default function PostCard({ post, onDeleted }) {
             {post.caption}
           </p>
         )}
-        {(post._count?.comments > 0 || comments.length > 0) && (
-          <button onClick={loadComments} className="text-gray-400 text-sm">
-            {showComments ? "Hide comments" : `View all ${post._count?.comments ?? comments.length} comments`}
+        {cCount > 0 && (
+          <button onClick={() => setPostOpen(true)} className="text-gray-400 text-sm">
+            View all {cCount.toLocaleString()} comments
           </button>
-        )}
-
-        {showComments && (
-          <div className="space-y-1 pt-1">
-            {comments.map((c) => (
-              <p key={c.id} className="text-sm">
-                <Link to={`/u/${c.author.username}`} className="font-semibold mr-1">{c.author.username}</Link>
-                {c.text}
-              </p>
-            ))}
-          </div>
         )}
       </div>
 
@@ -179,6 +159,13 @@ export default function PostCard({ post, onDeleted }) {
           postId={post.id}
           onClose={() => setConfirmDelete(false)}
           onDeleted={() => (onDeleted ? onDeleted(post.id) : navigate(-1))}
+        />
+      )}
+      {postOpen && (
+        <PostModal
+          post={{ ...post, likedByMe: liked, _count: { ...post._count, likes: likeCount } }}
+          onClose={() => setPostOpen(false)}
+          onCommentAdded={() => setCCount((n) => n + 1)}
         />
       )}
     </article>
