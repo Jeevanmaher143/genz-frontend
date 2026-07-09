@@ -58,6 +58,7 @@ export function MobileTopBar() {
 export function MobileBottomNav() {
   const { pathname } = useLocation();
   const { user } = useAuth();
+  const { unread } = useMessages();
   const active = (p) => pathname === p;
 
   return (
@@ -65,6 +66,14 @@ export function MobileBottomNav() {
                     flex items-center justify-around text-[27px] pb-[env(safe-area-inset-bottom)]">
       <Link to="/" className="p-1.5">{active("/") ? <GoHomeFill /> : <GoHome />}</Link>
       <Link to="/reels" className="p-1.5">{active("/reels") ? <BiSolidMoviePlay /> : <BiMoviePlay />}</Link>
+      <Link to="/messages" className="p-1.5 relative">
+        <RiMessengerLine />
+        {unread > 0 && (
+          <span className="absolute top-0 right-0 bg-ig-pink text-white text-[9px] font-bold leading-none min-w-[15px] h-[15px] px-1 rounded-full grid place-items-center">
+            {unread > 9 ? "9+" : unread}
+          </span>
+        )}
+      </Link>
       <Link to="/explore" className="p-1.5"><FiSearch /></Link>
       <Link to={`/u/${user?.username}`} className="p-1">
         <Avatar src={user?.avatarUrl} username={user?.username} size={27} ring={pathname === `/u/${user?.username}`} />
