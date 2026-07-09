@@ -3,7 +3,7 @@ import { useState } from "react";
 import { GoHome, GoHomeFill } from "react-icons/go";
 import { BiMoviePlay, BiSolidMoviePlay } from "react-icons/bi";
 import { RiMessengerLine } from "react-icons/ri";
-import { FiSearch, FiPlusSquare } from "react-icons/fi";
+import { FiSearch, FiPlusSquare, FiMenu, FiChevronLeft } from "react-icons/fi";
 import { FaRegHeart } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { useMessages } from "../context/MessagesContext";
@@ -12,9 +12,30 @@ import NotificationsPanel from "./NotificationsPanel";
 
 export function MobileTopBar() {
   const { unread } = useMessages();
+  const { user } = useAuth();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const [notifsOpen, setNotifsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
+
+  // On a profile page, Instagram's mobile header shows just the username
+  // (with a menu for your own profile) — no create/notifications/messages.
+  const profileMatch = pathname.match(/^\/u\/([^/]+)/);
+  if (profileMatch) {
+    const uname = decodeURIComponent(profileMatch[1]);
+    const isMe = user?.username === uname;
+    return (
+      <header className="md:hidden sticky top-0 z-40 bg-black/95 backdrop-blur border-b border-neutral-800 h-[54px] flex items-center px-4 gap-3">
+        {!isMe && (
+          <button onClick={() => navigate(-1)} aria-label="Back"><FiChevronLeft size={26} /></button>
+        )}
+        <span className="font-bold text-lg truncate">{uname}</span>
+        {isMe && (
+          <Link to="/settings" className="ml-auto" aria-label="Menu"><FiMenu size={24} /></Link>
+        )}
+      </header>
+    );
+  }
 
   return (
     <header className="md:hidden sticky top-0 z-40 bg-black/95 backdrop-blur border-b border-neutral-800 h-[54px] flex items-center px-4">

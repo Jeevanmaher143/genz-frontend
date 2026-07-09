@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { BsGrid3X3, BsBookmark, BsCameraReels, BsPersonSquare } from "react-icons/bs";
-import { FiPlus, FiMoreHorizontal, FiTrash2, FiLock, FiSettings, FiLink } from "react-icons/fi";
+import { FiPlus, FiMoreHorizontal, FiTrash2, FiLock, FiSettings, FiLink, FiUserPlus } from "react-icons/fi";
 import { GoVerified } from "react-icons/go";
 import { FaRegHeart, FaRegComment } from "react-icons/fa";
 import toast from "react-hot-toast";
@@ -137,12 +137,82 @@ export default function Profile() {
     )
   );
 
+  const shareProfile = async () => {
+    try { await navigator.clipboard.writeText(window.location.href); toast.success("Profile link copied"); }
+    catch { toast.error("Could not copy"); }
+  };
+
   return (
-    <div className="max-w-[935px] mx-auto px-4 pt-4 sm:pt-0">
-      {/* ================= Instagram-style header ================= */}
-      <header className="flex flex-col sm:flex-row gap-6 sm:gap-0 mb-8 sm:mb-11">
+    <div className="max-w-[935px] mx-auto px-4 pt-3 sm:pt-0">
+      {/* ================= MOBILE header (matches Instagram app) ================= */}
+      <div className="sm:hidden">
+        {/* avatar + stats row (username lives in the top app bar) */}
+        <div className="flex items-center gap-5 mb-4">
+          <div className="relative shrink-0">
+            {isMe && (
+              <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-neutral-800 text-[10px] px-2.5 py-1 rounded-2xl rounded-bl-md z-10 whitespace-nowrap">Note…</span>
+            )}
+            <Avatar src={data.avatarUrl} username={data.username} size={82} />
+          </div>
+          <div className="flex-1 flex justify-around text-center">
+            <div><div className="font-semibold text-base">{data._count.posts}</div><div className="text-sm text-gray-300">posts</div></div>
+            <button onClick={() => setListModal("followers")}><div className="font-semibold text-base">{data._count.followers.toLocaleString()}</div><div className="text-sm text-gray-300">followers</div></button>
+            <button onClick={() => setListModal("following")}><div className="font-semibold text-base">{data._count.following.toLocaleString()}</div><div className="text-sm text-gray-300">following</div></button>
+          </div>
+        </div>
+
+        {/* name + bio + link */}
+        <div className="text-[13px] leading-[1.4] mb-4">
+          {data.fullName && <p className="font-semibold">{data.fullName}</p>}
+          {bioText && <p className="text-gray-100 whitespace-pre-line">{bioText}</p>}
+          {bioLink && (
+            <a href={linkHref(bioLink)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#e0f1ff] font-semibold mt-1">
+              <FiLink size={12} /> {bioLink.replace(/^https?:\/\//, "")}
+            </a>
+          )}
+        </div>
+
+        {/* buttons: Edit profile · Share profile · +  (or Follow · Message · +) */}
+        <div className="flex gap-2 mb-6">
+          {isMe ? (
+            <>
+              <Link to="/settings" className={`flex-1 text-center ${btnGray}`}>Edit profile</Link>
+              <button onClick={shareProfile} className={`flex-1 ${btnGray}`}>Share profile</button>
+            </>
+          ) : blockedByMe ? (
+            <button onClick={toggleBlock} className="btn-primary flex-1 py-1.5">Unblock</button>
+          ) : (
+            <>
+              <button onClick={toggleFollow} className={(following || requested) ? `flex-1 ${btnGray}` : "btn-primary flex-1 py-1.5"}>
+                {following ? "Following" : requested ? "Requested" : "Follow"}
+              </button>
+              <Link to={`/messages/${data.id}`} className={`flex-1 text-center ${btnGray}`}>Message</Link>
+            </>
+          )}
+          {isMe ? (
+            <button onClick={shareProfile} className={`${btnGray} px-3 grid place-items-center`} aria-label="Add"><FiUserPlus size={16} /></button>
+          ) : (
+            <div className="relative">
+              <button onClick={() => setMenuOpen((v) => !v)} className={`${btnGray} px-3 grid place-items-center h-full`} aria-label="Options"><FiMoreHorizontal size={18} /></button>
+              {menuOpen && (
+                <>
+                  <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
+                  <div className="absolute right-0 top-full mt-1 z-40 bg-neutral-800 rounded-xl shadow-2xl w-52 overflow-hidden border border-neutral-700">
+                    <button onClick={toggleBlock} className="w-full text-left px-4 py-3 text-sm text-ig-pink font-semibold hover:bg-neutral-700">{blockedByMe ? "Unblock" : "Block"}</button>
+                    <button onClick={() => { setMenuOpen(false); toast("Reported — thanks for your feedback"); }} className="w-full text-left px-4 py-3 text-sm text-ig-pink hover:bg-neutral-700 border-t border-neutral-700">Report</button>
+                    <button onClick={shareProfile} className="w-full text-left px-4 py-3 text-sm hover:bg-neutral-700 border-t border-neutral-700">Share to…</button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ================= DESKTOP header ================= */}
+      <header className="hidden sm:flex sm:flex-row mb-11">
         {/* avatar */}
-        <div className="flex justify-center sm:justify-center sm:basis-[300px] sm:shrink-0">
+        <div className="flex justify-center sm:basis-[300px] sm:shrink-0">
           <div className="relative">
             {isMe && (
               <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-neutral-800 text-[11px] px-3 py-1 rounded-2xl rounded-bl-md z-10 shadow">
@@ -215,15 +285,8 @@ export default function Profile() {
         </section>
       </header>
 
-      {/* ---- Action buttons: full-width row below the header ---- */}
-      <div className="flex gap-2 mb-6 sm:mb-8"><ActionButtons full /></div>
-
-      {/* stats bar (mobile) */}
-      <div className="sm:hidden flex justify-around py-3 border-y border-neutral-800 mb-4 text-center">
-        <div><div className="font-semibold">{data._count.posts}</div><div className="text-gray-400 text-xs">posts</div></div>
-        <button onClick={() => setListModal("followers")}><div className="font-semibold">{data._count.followers.toLocaleString()}</div><div className="text-gray-400 text-xs">followers</div></button>
-        <button onClick={() => setListModal("following")}><div className="font-semibold">{data._count.following.toLocaleString()}</div><div className="text-gray-400 text-xs">following</div></button>
-      </div>
+      {/* Action buttons — desktop only (mobile has its own row above) */}
+      <div className="hidden sm:flex gap-2 mb-8"><ActionButtons full /></div>
 
       {/* ---- Private account lock ---- */}
       {locked && (
